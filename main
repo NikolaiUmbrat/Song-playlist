@@ -1,0 +1,218 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SONGS 50
+
+typedef struct
+{
+    char title[50];
+    char artist[50];
+    int duration;
+}
+song;
+
+song playlist[MAX_SONGS];
+int song_count = 0;
+
+void clear_screen(void)
+{
+    system("cls");
+}
+
+void print_header(void)
+{
+    printf("\n");
+    printf("  ===============================================\n");
+    printf("  ||                                           ||\n");
+    printf("  ||        MUSIC PLAYLIST MANAGER             ||\n");
+    printf("  ||                                           ||\n");
+    printf("  ===============================================\n");
+    printf("\n");
+}
+
+void print_line(void)
+{
+    printf("  -----------------------------------------------\n");
+}
+
+void add_song(void)
+{
+    clear_screen();
+    print_header();
+
+    if (song_count >= MAX_SONGS)
+    {
+        printf("  [!] Playlist is full! Maximum %d songs.\n", MAX_SONGS);
+        printf("\n  Press Enter to continue...");
+        getchar();
+        return;
+    }
+
+    printf("  ADD NEW SONG\n");
+    print_line();
+
+    printf("\n  Song Title: ");
+    scanf(" %[^\n]", playlist[song_count].title);
+
+    printf("  Artist Name: ");
+    scanf(" %[^\n]", playlist[song_count].artist);
+
+    printf("  Duration (seconds): ");
+    scanf("%d", &playlist[song_count].duration);
+
+    song_count++;
+
+    printf("\n  [✓] Song added successfully!\n");
+    printf("\n  Press Enter to continue...");
+    getchar();
+    getchar();
+}
+
+void display_playlist(void)
+{
+    clear_screen();
+    print_header();
+
+    if (song_count == 0)
+    {
+        printf("  YOUR PLAYLIST\n");
+        print_line();
+        printf("\n  [!] Playlist is empty. Add some songs!\n");
+        printf("\n  Press Enter to continue...");
+        getchar();
+        getchar();
+        return;
+    }
+
+    printf("  YOUR PLAYLIST (%d songs)\n", song_count);
+    print_line();
+
+    int total_duration = 0;
+
+    for (int i = 0; i < song_count; i++)
+    {
+        int mins = playlist[i].duration / 60;
+        int secs = playlist[i].duration % 60;
+        total_duration += playlist[i].duration;
+
+        printf("\n  [%d] %s\n", i + 1, playlist[i].title);
+        printf("      Artist: %s\n", playlist[i].artist);
+        printf("      Duration: %d:%02d\n", mins, secs);
+    }
+
+    int total_mins = total_duration / 60;
+    int total_secs = total_duration % 60;
+
+    print_line();
+    printf("  Total Duration: %d:%02d\n", total_mins, total_secs);
+
+    printf("\n  Press Enter to continue...");
+    getchar();
+    getchar();
+}
+
+void delete_song(void)
+{
+    clear_screen();
+    print_header();
+
+    if (song_count == 0)
+    {
+        printf("  DELETE SONG\n");
+        print_line();
+        printf("\n  [!] Playlist is empty!\n");
+        printf("\n  Press Enter to continue...");
+        getchar();
+        getchar();
+        return;
+    }
+
+    printf("  DELETE SONG\n");
+    print_line();
+
+    printf("\n  Current songs:\n\n");
+    for (int i = 0; i < song_count; i++)
+    {
+        printf("  [%d] %s - %s\n", i + 1, playlist[i].title, playlist[i].artist);
+    }
+
+    int num;
+    printf("\n  Enter song number to delete: ");
+    scanf("%d", &num);
+
+    if (num < 1 || num > song_count)
+    {
+        printf("\n  [!] Invalid song number!\n");
+        printf("\n  Press Enter to continue...");
+        getchar();
+        getchar();
+        return;
+    }
+
+    printf("\n  [✓] Deleted: %s - %s\n", playlist[num - 1].title, playlist[num - 1].artist);
+
+    for (int i = num - 1; i < song_count - 1; i++)
+    {
+        playlist[i] = playlist[i + 1];
+    }
+
+    song_count--;
+
+    printf("\n  Press Enter to continue...");
+    getchar();
+    getchar();
+}
+
+int main(void)
+{
+    int choice;
+
+    while (1)
+    {
+        clear_screen();
+        print_header();
+
+        printf("  MAIN MENU\n");
+        print_line();
+        printf("\n");
+        printf("  [1] Add a Song\n");
+        printf("  [2] View Playlist\n");
+        printf("  [3] Delete a Song\n");
+        printf("  [4] Exit Program\n");
+        printf("\n");
+        print_line();
+        printf("\n  Enter your choice: ");
+        scanf("%d", &choice);
+
+        if (choice == 1)
+        {
+            add_song();
+        }
+        else if (choice == 2)
+        {
+            display_playlist();
+        }
+        else if (choice == 3)
+        {
+            delete_song();
+        }
+        else if (choice == 4)
+        {
+            clear_screen();
+            print_header();
+            printf("  Thank you for using Music Playlist Manager!\n");
+            printf("  Goodbye! ♫\n\n");
+            break;
+        }
+        else
+        {
+            printf("\n  [!] Invalid choice! Please try again.\n");
+            printf("\n  Press Enter to continue...");
+            getchar();
+            getchar();
+        }
+    }
+
+    return 0;
+}
